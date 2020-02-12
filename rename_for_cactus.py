@@ -6,12 +6,13 @@ import unidecode
 
 
 def rename_file(from_file):
-    # if not from_file[:3] == "05.":
-    #     return ""
-    # remove special characters
     file, extension = os.path.splitext(from_file)
+
+    # remove special characters
+    # unidecode = standing on the shoulders of giants
     file = unidecode(file)
-    # remove dots
+
+    # replace dots with space
     file = file.replace(".", " ")
 
     # remove dots and other stuff
@@ -23,11 +24,11 @@ def rename_file(from_file):
 
     to_file = file + extension
     print("{} -> {}".format(from_file, to_file))
+
     return to_file
 
 
 def main(path):
-    # cwd = os.getcwd()
     # rename folders
     for (dirpath, dirnames, filenames) in os.walk(path):
         for dirname in dirnames:
@@ -36,7 +37,8 @@ def main(path):
                 "{}/{}".format(dirpath, dirname),
                 "{}/{}".format(dirpath, dirname_renamed),
             )
-    # now rename files
+
+    # rename files
     for (dirpath, dirnames, filenames) in os.walk(path):
         for file in filenames:
             file_renamed = rename_file(file)
@@ -44,8 +46,6 @@ def main(path):
                 "{}/{}".format(dirpath, file), "{}/{}".format(dirpath, file_renamed)
             )
 
-
-print(__name__)
 
 if __name__ == "__main__":
     print(sys.argv)
