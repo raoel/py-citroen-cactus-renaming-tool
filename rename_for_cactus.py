@@ -2,7 +2,9 @@ import os
 import re
 import sys
 
-import unidecode
+from unidecode import unidecode
+
+counter = 0
 
 
 def rename_file(from_file):
@@ -23,9 +25,14 @@ def rename_file(from_file):
     file = file.replace("  ", " ")
 
     to_file = file + extension
-    print("{} -> {}".format(from_file, to_file))
 
-    return to_file
+    return to_file.strip()
+
+
+def rename_do(path, file, file_renamed):
+    counter += 1
+    print("{}/{} -> {}/{}".format(path, file, path, file_renamed))
+    os.rename("{}/{}".format(path, file), "{}/{}".format(path, file_renamed))
 
 
 def main(path):
@@ -33,22 +40,20 @@ def main(path):
     for (dirpath, dirnames, filenames) in os.walk(path):
         for dirname in dirnames:
             dirname_renamed = rename_file(dirname)
-            os.rename(
-                "{}/{}".format(dirpath, dirname),
-                "{}/{}".format(dirpath, dirname_renamed),
-            )
+            if dirname_renamed != dirname:
+                rename_do(dirpath, dirname, dirname_renamed)
 
     # rename files
     for (dirpath, dirnames, filenames) in os.walk(path):
         for file in filenames:
             file_renamed = rename_file(file)
-            os.rename(
-                "{}/{}".format(dirpath, file), "{}/{}".format(dirpath, file_renamed)
-            )
+            if file_renamed != file:
+                rename_do(dirpath, file, file_renamed)
 
 
 if __name__ == "__main__":
-    print(sys.argv)
     if len(sys.argv) == 1:
+        print("Please add a folder as parameter")
         exit(1)
     main(sys.argv[1])
+    print("{} files/folders have been renamed".format(counter))
